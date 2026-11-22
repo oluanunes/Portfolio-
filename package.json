@@ -8,13 +8,15 @@
     "build": "astro build",
     "preview": "astro preview",
     "test": "vitest run",
-    "check": "node scripts/check-build.mjs"
+    "check": "node scripts/check-build.mjs",
+    "photos": "node scripts/make-placeholders.mjs"
   },
   "dependencies": {
     "astro": "^7.4.13"
   },
   "devDependencies": {
     "@astrojs/sitemap": "^3.7.6",
+    "sharp": "^0.35.5",
     "typescript": "^7.0.2",
     "vitest": "^5.1.1"
   }

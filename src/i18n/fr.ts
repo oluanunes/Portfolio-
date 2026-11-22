@@ -105,4 +105,9 @@ export const fr: Record<DictKey, string> = {
   'meta.area.portrait.description': "Séances de portrait, de couple et de famille : des personnes telles qu'elles sont. Découvrez les séries, les forfaits et demandez un devis.",
   'meta.area.commercial.title': 'Commercial et Audiovisuel | [SEU NOME]',
   'meta.area.commercial.description': 'Photographie commerciale et audiovisuelle : voitures, plateaux de tournage et projets sur commande. Découvrez les séries et demandez un devis.',
+
+  // Textos alternativos das fotos (seguidos do número da foto)
+  'alt.landscape': 'Photographie de paysage et de voyage',
+  'alt.portrait': 'Photographie de portrait, de couple et de famille',
+  'alt.commercial': 'Photographie commerciale et audiovisuelle',
 };

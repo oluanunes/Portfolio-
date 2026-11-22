@@ -107,4 +107,9 @@ export const pt = {
   'meta.area.portrait.description': 'Sessões de retrato, casal e família: pessoas como elas são. Veja as séries, conheça os pacotes e peça um orçamento para a sua sessão.',
   'meta.area.commercial.title': 'Comercial e Audiovisual | [SEU NOME]',
   'meta.area.commercial.description': 'Fotografia comercial e audiovisual: carros, sets de filmagem e projetos sob encomenda. Veja as séries e peça um orçamento para o seu projeto.',
+
+  // Textos alternativos das fotos (seguidos do número da foto)
+  'alt.landscape': 'Fotografia de paisagem e viagem',
+  'alt.portrait': 'Fotografia de retrato, casal e família',
+  'alt.commercial': 'Fotografia comercial e audiovisual',
 };

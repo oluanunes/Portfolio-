@@ -105,4 +105,9 @@ export const en: Record<DictKey, string> = {
   'meta.area.portrait.description': 'Portrait, couple and family sessions: people as they are. Browse the series, see the packages and request a quote for your session.',
   'meta.area.commercial.title': 'Commercial and Film | [SEU NOME]',
   'meta.area.commercial.description': 'Commercial and film photography: cars, film sets and commissioned projects. Browse the series and request a quote for your project.',
+
+  // Textos alternativos das fotos (seguidos do número da foto)
+  'alt.landscape': 'Landscape and travel photography',
+  'alt.portrait': 'Portrait, couple and family photography',
+  'alt.commercial': 'Commercial and film photography',
 };
