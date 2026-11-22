@@ -1,0 +1,49 @@
+---
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+---
+
+<button type="button" class="theme-toggle" aria-label={t(lang, 'theme.toggleLabel')} data-theme-toggle>
+  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false">
+    <circle cx="10" cy="10" r="7"></circle>
+    <path d="M10 3a7 7 0 0 1 0 14z" fill="currentColor"></path>
+  </svg>
+</button>
+
+<style>
+  .theme-toggle {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+  }
+  .theme-toggle:focus-visible {
+    outline-color: #ffffff;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-theme-toggle]').forEach((button) => {
+    button.addEventListener('click', () => {
+      const root = document.documentElement;
+      const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+      root.dataset.theme = next;
+      try {
+        localStorage.setItem('theme', next);
+      } catch {
+        // Armazenamento indisponível (modo privado, bloqueado): o tema vale só nesta visita.
+      }
+    });
+  });
+</script>

@@ -1,9 +1,101 @@
 ---
+import '../styles/tokens.css';
+import '../styles/global.css';
+import { t, type Lang } from '../i18n';
+import { href } from '../lib/url';
+
+const title = t('fr', 'meta.home.title');
+const description = t('fr', 'meta.home.description');
+
+// Nomes dos idiomas escritos em cada idioma; a raiz não tem idioma próprio.
+const choices: { lang: Lang; label: string; htmlLang: string }[] = [
+  { lang: 'fr', label: 'Français', htmlLang: 'fr-CH' },
+  { lang: 'en', label: 'English', htmlLang: 'en' },
+  { lang: 'pt', label: 'Português', htmlLang: 'pt-BR' },
+];
 ---
-<html lang="pt">
+
+<!doctype html>
+<html lang="fr">
   <head>
     <meta charset="utf-8" />
-    <title>Portfólio</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap"
+    />
+    <script is:inline src={href('/theme-init.js')}></script>
   </head>
-  <body></body>
+  <body>
+    <main class="chooser">
+      <p class="chooser__logo">{t('fr', 'brand.logo')}</p>
+      <ul class="chooser__list">
+        {
+          choices.map((c) => (
+            <li>
+              <a href={href(`/${c.lang}/`)} lang={c.htmlLang} hreflang={c.htmlLang}>
+                {c.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </main>
+
+    <script>
+      import { pickLang } from '../i18n';
+      import { href } from '../lib/url';
+
+      // Com JavaScript: vai direto ao idioma do navegador. Sem JavaScript, os
+      // links acima continuam visíveis para a pessoa escolher.
+      location.replace(href(`/${pickLang(navigator.languages)}/`));
+    </script>
+  </body>
 </html>
+
+<style>
+  .chooser {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 32px;
+    padding: 24px;
+  }
+  .chooser__logo {
+    margin: 0;
+    font-family: var(--font-display);
+    font-size: 40px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+  }
+  .chooser__list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .chooser__list a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 22px;
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    border-radius: 2px;
+    border: 1px solid var(--line);
+    color: var(--text);
+  }
+</style>

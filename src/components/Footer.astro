@@ -1,0 +1,32 @@
+---
+import { t, type Lang } from '../i18n';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+---
+
+<footer class="site-footer">
+  <div class="site-footer__inner">
+    <span>{t(lang, 'footer.copyright')}</span>
+    <span>{t(lang, 'footer.contact')}</span>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    padding: 36px clamp(20px, 5vw, 64px);
+    border-top: 1px solid var(--line);
+  }
+  .site-footer__inner {
+    max-width: 1312px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 16px;
+    font-size: 14px;
+    color: var(--muted);
+  }
+</style>

@@ -1,0 +1,60 @@
+---
+import { LANGS, t, type Lang } from '../i18n';
+import { href } from '../lib/url';
+
+interface Props {
+  lang: Lang;
+  /** Rota sem o prefixo de idioma ('' na Home, 'portrait/' numa área). */
+  path: string;
+}
+const { lang, path } = Astro.props;
+
+const hreflangs: Record<Lang, string> = { pt: 'pt-BR', fr: 'fr-CH', en: 'en' };
+---
+
+<div class="lang-switch" role="group" aria-label={t(lang, 'lang.switchLabel')}>
+  {
+    LANGS.map((code) => (
+      <a
+        href={href(`/${code}/${path}`)}
+        lang={hreflangs[code]}
+        hreflang={hreflangs[code]}
+        aria-current={code === lang ? 'true' : undefined}
+        class="lang-link"
+      >
+        {code.toUpperCase()}
+      </a>
+    ))
+  }
+</div>
+
+<style>
+  .lang-switch {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .lang-link {
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    border-radius: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: transparent;
+    color: #ffffff;
+  }
+  .lang-link[aria-current='true'] {
+    background: rgba(255, 255, 255, 0.92);
+    color: #111111;
+  }
+  .lang-link:focus-visible {
+    outline-color: #ffffff;
+  }
+</style>

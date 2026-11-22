@@ -1,0 +1,72 @@
+---
+import '../styles/tokens.css';
+import '../styles/global.css';
+import { LANGS, t, type Lang } from '../i18n';
+import { href } from '../lib/url';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** Rota sem o prefixo de idioma ('' na Home, 'portrait/' numa área). */
+  path: string;
+}
+const { lang, title, description, path } = Astro.props;
+
+const htmlLangs: Record<Lang, string> = { pt: 'pt-BR', fr: 'fr-CH', en: 'en' };
+const absolute = (url: string) => new URL(url, Astro.site).href;
+
+const canonical = absolute(href(`/${lang}/${path}`));
+const alternates = LANGS.map((code) => ({
+  hreflang: htmlLangs[code],
+  href: absolute(href(`/${code}/${path}`)),
+}));
+const xDefault = absolute(href('/'));
+---
+
+<!doctype html>
+<html lang={htmlLangs[lang]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
+    <link rel="alternate" hreflang="x-default" href={xDefault} />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap"
+    />
+    <script is:inline src={href('/theme-init.js')}></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{t(lang, 'nav.skipToContent')}</a>
+    <Header lang={lang} path={path} />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer lang={lang} />
+  </body>
+</html>
+
+<style is:global>
+  .skip-link {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 20;
+    padding: 12px 16px;
+    border-radius: 2px;
+    background: var(--accent);
+    color: var(--accent-text);
+    transform: translateY(-200%);
+  }
+  .skip-link:focus {
+    transform: translateY(0);
+  }
+</style>

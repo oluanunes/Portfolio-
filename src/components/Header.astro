@@ -1,0 +1,195 @@
+---
+import { t, type Lang } from '../i18n';
+import { href } from '../lib/url';
+import LangSwitch from './LangSwitch.astro';
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  lang: Lang;
+  /** Rota sem o prefixo de idioma ('' na Home, 'portrait/' numa área). */
+  path: string;
+}
+const { lang, path } = Astro.props;
+
+const home = href(`/${lang}/`);
+const links = [
+  { label: t(lang, 'nav.landscape'), href: href(`/${lang}/landscape/`) },
+  { label: t(lang, 'nav.portrait'), href: href(`/${lang}/portrait/`) },
+  { label: t(lang, 'nav.commercial'), href: href(`/${lang}/commercial/`) },
+  { label: t(lang, 'nav.about'), href: `${home}#about` },
+];
+---
+
+<header class="site-header" data-site-header>
+  <nav class="site-nav" aria-label={t(lang, 'nav.menuLabel')}>
+    <a class="logo" href={home}>{t(lang, 'brand.logo')}</a>
+
+    <button
+      type="button"
+      class="menu-button"
+      aria-expanded="false"
+      aria-controls="primary-links"
+      aria-label={t(lang, 'nav.menuLabel')}
+      data-menu-button
+    >
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true" focusable="false">
+        <path d="M3 6h14M3 10h14M3 14h14"></path>
+      </svg>
+    </button>
+
+    <ul class="links" id="primary-links">
+      {links.map((link) => <li><a class="link" href={link.href}>{link.label}</a></li>)}
+    </ul>
+
+    <div class="controls">
+      <LangSwitch lang={lang} path={path} />
+      <ThemeToggle lang={lang} />
+      <a class="cta" href={`${home}#orcamento`}>{t(lang, 'nav.cta')}</a>
+    </div>
+  </nav>
+</header>
+
+<style>
+  .site-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    color: #ffffff;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0));
+  }
+  .site-nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 28px clamp(20px, 5vw, 64px);
+  }
+  .logo {
+    font-family: var(--font-display);
+    font-size: 30px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    color: #ffffff;
+    text-decoration: none;
+  }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 28px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: 14px;
+    color: #ffffff;
+    text-decoration: none;
+  }
+  .link:hover {
+    text-decoration: underline;
+  }
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+  }
+  .cta {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 22px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 2px;
+    background: var(--accent);
+    color: var(--accent-text);
+  }
+  .menu-button {
+    display: none;
+    width: 44px;
+    height: 44px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border-radius: 2px;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    background: transparent;
+    color: #ffffff;
+    cursor: pointer;
+  }
+  .logo:focus-visible,
+  .link:focus-visible,
+  .menu-button:focus-visible {
+    outline-color: #ffffff;
+  }
+
+  /* Telas estreitas: o menu recolhe atrás do botão, mas só quando o JavaScript
+     está ativo (a classe "js" é posta pelo script abaixo). Sem JS, os links
+     continuam visíveis. */
+  @media (max-width: 768px) {
+    .site-nav {
+      padding: 16px 20px;
+      gap: 12px;
+    }
+    .logo {
+      font-size: 26px;
+    }
+    .controls {
+      order: 3;
+      width: 100%;
+    }
+    .links {
+      order: 4;
+      width: 100%;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0;
+    }
+    .js .menu-button {
+      display: flex;
+    }
+    .js .links {
+      display: none;
+    }
+    .js .links.is-open {
+      display: flex;
+      padding: 8px 0;
+      background: rgba(0, 0, 0, 0.55);
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .link,
+    .cta {
+      transition:
+        opacity 150ms ease,
+        transform 150ms ease;
+    }
+    .cta:hover {
+      opacity: 0.92;
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-site-header]');
+  const button = header?.querySelector<HTMLButtonElement>('[data-menu-button]');
+  const links = header?.querySelector<HTMLElement>('#primary-links');
+
+  if (header && button && links) {
+    header.classList.add('js');
+    button.addEventListener('click', () => {
+      const open = button.getAttribute('aria-expanded') !== 'true';
+      button.setAttribute('aria-expanded', String(open));
+      links.classList.toggle('is-open', open);
+    });
+  }
+</script>
