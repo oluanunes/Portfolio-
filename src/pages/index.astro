@@ -4,8 +4,10 @@ import '../styles/global.css';
 import { t, type Lang } from '../i18n';
 import { href } from '../lib/url';
 
-const title = t('fr', 'meta.home.title');
+// Título próprio da raiz (diferente do da Home /fr/, para não duplicar títulos).
+const title = `${t('fr', 'brand.logo')} | Photographie · Photography · Fotografia`;
 const description = t('fr', 'meta.home.description');
+const canonical = new URL(href('/'), Astro.site).href;
 
 // Nomes dos idiomas escritos em cada idioma; a raiz não tem idioma próprio.
 const choices: { lang: Lang; label: string; htmlLang: string }[] = [
@@ -22,6 +24,15 @@ const choices: { lang: Lang; label: string; htmlLang: string }[] = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={href('/favicon.svg')} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="fr_CH" />
+    <meta property="og:locale:alternate" content="en_US" />
+    <meta property="og:locale:alternate" content="pt_BR" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

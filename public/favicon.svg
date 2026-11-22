@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Aperture mark">
+  <defs><clipPath id="lens"><circle cx="32" cy="32" r="22"/></clipPath></defs>
+  <circle cx="32" cy="32" r="30" fill="#14110C"/>
+  <g fill="none" stroke="#D9A25B" stroke-width="3.5" stroke-linecap="round">
+    <circle cx="32" cy="32" r="22"/>
+  </g>
+  <g fill="none" stroke="#D9A25B" stroke-width="3" stroke-linecap="round" clip-path="url(#lens)">
+    <line x1="32.0" y1="5.0" x2="41.5" y2="37.5"/>
+    <line x1="55.4" y1="18.5" x2="32.0" y2="43.0"/>
+    <line x1="55.4" y1="45.5" x2="22.5" y2="37.5"/>
+    <line x1="32.0" y1="59.0" x2="22.5" y2="26.5"/>
+    <line x1="8.6" y1="45.5" x2="32.0" y2="21.0"/>
+    <line x1="8.6" y1="18.5" x2="41.5" y2="26.5"/>
+  </g>
+</svg>
