@@ -26,15 +26,15 @@
 
 ## Foco da revisão (entradas que o spec não menciona)
 
-1. Idioma do navegador fora de pt/fr/en, ou lista vazia: cai em `fr` (Tarefa 2).
-2. JavaScript desligado: a raiz mostra links para os três idiomas e o tema padrão é escuro, sem "piscada" (Tarefa 4).
-3. Texto branco sobre foto muito clara continua legível no tema claro (Tarefa 3).
-4. Envio do formulário falha ou está offline: mensagem visível com alternativa por e-mail, sem perder o texto digitado. `?tipo=` inválido é ignorado (Tarefa 8).
-5. Foto sem texto alternativo, ou original gigante no repositório: a verificação do build falha ou avisa (Tarefa 9).
+1. Idioma do navegador fora de pt/fr/en, ou lista vazia: cai em `fr` (Task 2).
+2. JavaScript desligado: a raiz mostra links para os três idiomas e o tema padrão é escuro, sem "piscada" (Task 4).
+3. Texto branco sobre foto muito clara continua legível no tema claro (Task 3).
+4. Envio do formulário falha ou está offline: mensagem visível com alternativa por e-mail, sem perder o texto digitado. `?tipo=` inválido é ignorado (Task 8).
+5. Foto sem texto alternativo, ou original gigante no repositório: a verificação do build falha ou avisa (Task 9).
 
 ---
 
-### Tarefa 1: Projeto e repositório
+### Task 1: Projeto e repositório
 
 **Arquivos:** criar `package.json`, `astro.config.mjs`, `tsconfig.json`, `vitest.config.ts`, `.gitignore`, `README.md`, `docs/superpowers/{specs,plans}/` (copiar spec e este plano).
 
@@ -45,7 +45,7 @@
 - [ ] **Passo 3:** rodar `npm run build`. Esperado: build vazio conclui sem erro.
 - [ ] **Passo 4:** `git init` e commit `chore: projeto Astro inicial`.
 
-### Tarefa 2: Idiomas
+### Task 2: Idiomas
 
 **Arquivos:** criar `src/i18n/{pt,fr,en}.ts`, `src/i18n/index.ts`; teste `src/i18n/index.test.ts`.
 
@@ -59,7 +59,7 @@
 - [ ] **Passo 3:** `npm test`. Esperado: passa.
 - [ ] **Passo 4:** commit `feat: dicionários e escolha de idioma`.
 
-### Tarefa 3: Tema e contraste
+### Task 3: Tema e contraste
 
 **Arquivos:** criar `src/styles/tokens.css`, `src/lib/theme.ts`, `src/lib/contrast.ts`; testes `src/lib/theme.test.ts`, `src/lib/contrast.test.ts`.
 
@@ -75,7 +75,7 @@
 - [ ] **Passo 3:** `npm test`. Esperado: passa.
 - [ ] **Passo 4:** commit `feat: tema, tokens e teste de contraste`.
 
-### Tarefa 4: Estrutura comum (layout)
+### Task 4: Estrutura comum (layout)
 
 **Arquivos:** criar `src/layouts/Base.astro`, `src/components/{Header,Footer,LangSwitch,ThemeToggle}.astro`, `src/pages/index.astro`, `public/theme-init.js`.
 
@@ -85,7 +85,7 @@
 - [ ] **Passo 2:** rodar `npm run build` e conferir no HTML da raiz o `<noscript>` com os três links.
 - [ ] **Passo 3:** commit `feat: layout, cabeçalho, idiomas e tema`.
 
-### Tarefa 5: Fotos e imagens de substituição
+### Task 5: Fotos e imagens de substituição
 
 **Arquivos:** criar `scripts/make-placeholders.mjs`, `src/content/areas.ts`, `src/lib/photos.ts`; teste `src/lib/photos.test.ts`.
 
@@ -96,7 +96,7 @@
 - [ ] **Passo 3:** rodar o script e `npm test`. Esperado: passa, 24 imagens geradas.
 - [ ] **Passo 4:** commit `feat: fotos de substituição e textos alternativos`.
 
-### Tarefa 6: Página inicial
+### Task 6: Página inicial
 
 **Arquivos:** criar `src/pages/[lang]/index.astro`, `src/components/{Hero,Doors,FeaturedSeries,About}.astro`, `src/lib/filter.ts`, `src/scripts/filter.ts`; teste `src/lib/filter.test.ts`.
 
@@ -107,7 +107,7 @@
 - [ ] **Passo 3:** `npm test && npm run build`. Esperado: passa, três Homes geradas.
 - [ ] **Passo 4:** commit `feat: página inicial trilíngue`.
 
-### Tarefa 7: Páginas de área
+### Task 7: Páginas de área
 
 **Arquivos:** criar `src/pages/[lang]/[area].astro`, `src/components/{AreaHero,Gallery,Packages,AreaCta}.astro`.
 
@@ -117,7 +117,7 @@
 - [ ] **Passo 2:** `npm run build`. Esperado: 9 páginas de área.
 - [ ] **Passo 3:** commit `feat: páginas de área`.
 
-### Tarefa 8: Formulário de orçamento
+### Task 8: Formulário de orçamento
 
 **Arquivos:** criar `src/lib/quote.ts`, `src/components/QuoteForm.astro`, `src/scripts/quote-form.ts`, `.env.example`; teste `src/lib/quote.test.ts`.
 
@@ -133,7 +133,7 @@
 - [ ] **Passo 4:** o Luan cria a chave gratuita no Web3Forms com o e-mail que recebe os pedidos e a coloca em `.env`. Se ainda não tiver, o site publica no modo `'unconfigured'`.
 - [ ] **Passo 5:** commit `feat: formulário de orçamento`.
 
-### Tarefa 9: SEO e verificação do build
+### Task 9: SEO e verificação do build
 
 **Arquivos:** criar `scripts/check-build.mjs`; modificar `astro.config.mjs` (sitemap), criar `public/robots.txt`.
 
@@ -143,7 +143,7 @@
 - [ ] **Passo 2:** `npm run build && npm run check`. Esperado: passa. Se falhar, corrigir a causa, não a regra.
 - [ ] **Passo 3:** commit `feat: SEO e verificação do build`.
 
-### Tarefa 10: Publicação
+### Task 10: Publicação
 
 **Arquivos:** criar `.github/workflows/deploy.yml`; modificar `astro.config.mjs` (`site`, `base`).
 
