@@ -1,0 +1,150 @@
+---
+import { Image } from 'astro:assets';
+import { t, type Lang } from '../i18n';
+import { href } from '../lib/url';
+import { altFor, listPhotos } from '../lib/photos';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const photo = listPhotos('landscape')[0];
+const quote = `${href(`/${lang}/`)}#orcamento`;
+---
+
+<section class="hero">
+  <Image
+    class="hero__photo"
+    src={photo}
+    alt={altFor(lang, 'landscape', 0)}
+    widths={[800, 1280, 1920]}
+    sizes="100vw"
+    format="webp"
+    loading="eager"
+    fetchpriority="high"
+  />
+  <div class="hero__scrim" aria-hidden="true"></div>
+  <div class="hero__content">
+    <div class="hero__text">
+      <h1 class="hero__title">{t(lang, 'home.hero.title')}</h1>
+      <p class="hero__sub">{t(lang, 'home.hero.sub')}</p>
+      <div class="hero__actions">
+        <a class="hero__cta" href={quote}>{t(lang, 'home.hero.cta')}</a>
+        <a class="hero__secondary" href="#areas">{t(lang, 'home.hero.secondary')}</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    position: relative;
+    min-height: 800px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: #ffffff;
+    background: #14110c;
+  }
+  .hero__photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .hero__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, 0.78) 100%);
+  }
+  .hero__content {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    padding: 160px clamp(20px, 5vw, 64px) 88px;
+  }
+  .hero__text {
+    max-width: 880px;
+  }
+  .hero__title {
+    margin: 0 0 24px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(44px, 6vw, 88px);
+    line-height: 1.02;
+    color: #ffffff;
+  }
+  .hero__sub {
+    margin: 0 0 36px;
+    max-width: 520px;
+    font-size: 18px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.88);
+  }
+  .hero__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 16px;
+  }
+  .hero__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 52px;
+    padding: 0 30px;
+    font-size: 15px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 2px;
+    background: var(--accent);
+    color: var(--accent-text);
+  }
+  .hero__secondary {
+    display: inline-flex;
+    align-items: center;
+    min-height: 52px;
+    padding: 0 8px;
+    font-size: 15px;
+    font-weight: 500;
+    color: #ffffff;
+    text-decoration: underline;
+    text-underline-offset: 6px;
+  }
+  .hero__secondary:focus-visible {
+    outline-color: #ffffff;
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      min-height: 640px;
+    }
+    .hero__content {
+      padding-bottom: 48px;
+    }
+    .hero__sub {
+      margin-bottom: 28px;
+      font-size: 16px;
+    }
+    .hero__actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .hero__secondary {
+      justify-content: center;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__cta,
+    .hero__secondary {
+      transition: opacity 150ms ease;
+    }
+    .hero__cta:hover,
+    .hero__secondary:hover {
+      opacity: 0.88;
+    }
+  }
+</style>

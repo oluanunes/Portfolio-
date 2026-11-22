@@ -1,0 +1,168 @@
+---
+import { Image } from 'astro:assets';
+import { t, type Lang } from '../i18n';
+import { AREAS } from '../content/areas';
+import { href } from '../lib/url';
+import { altFor, listPhotos } from '../lib/photos';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+const doors = AREAS.map((slug) => ({
+  slug,
+  href: href(`/${lang}/${slug}/`),
+  photo: listPhotos(slug)[0],
+  alt: altFor(lang, slug, 0),
+  title: t(lang, `area.${slug}.title`),
+  tagline: t(lang, `area.${slug}.tagline`),
+}));
+---
+
+<section class="doors" id="areas">
+  <div class="doors__inner">
+    <p class="doors__label">{t(lang, 'home.areas.label')}</p>
+    <h2 class="doors__title">{t(lang, 'home.areas.title')}</h2>
+    <div class="doors__grid">
+      {
+        doors.map((door) => (
+          <a class="door" href={door.href}>
+            <Image
+              class="door__photo"
+              src={door.photo}
+              alt={door.alt}
+              widths={[480, 800, 1200]}
+              sizes="(min-width: 900px) 33vw, 100vw"
+              format="webp"
+              loading="lazy"
+            />
+            <span class="door__scrim" aria-hidden="true" />
+            <span class="door__title">{door.title}</span>
+            <span class="door__tagline">{door.tagline}</span>
+            <span class="door__more">{t(lang, 'home.areas.seeSeries')}</span>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .doors {
+    padding: 112px clamp(20px, 5vw, 64px);
+  }
+  .doors__inner {
+    max-width: 1312px;
+    margin: 0 auto;
+  }
+  .doors__label {
+    margin: 0 0 14px;
+    font-size: 12px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .doors__title {
+    margin: 0 0 56px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(34px, 4vw, 52px);
+    line-height: 1.1;
+  }
+  .doors__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+  }
+  .door {
+    flex: 1 1 300px;
+    min-height: 560px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 32px;
+    overflow: hidden;
+    border-radius: 2px;
+    text-decoration: none;
+    color: #ffffff;
+    background: #14110c;
+  }
+  .door__photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .door__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.78) 100%);
+  }
+  .door__title,
+  .door__tagline,
+  .door__more {
+    position: relative;
+  }
+  .door__title {
+    margin-bottom: 10px;
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: 34px;
+    line-height: 1.1;
+  }
+  .door__tagline {
+    margin-bottom: 22px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.88);
+  }
+  .door__more {
+    align-self: flex-start;
+    padding-bottom: 4px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.7);
+  }
+  .door:focus-visible {
+    outline-color: var(--accent);
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 768px) {
+    .doors {
+      padding: 64px clamp(20px, 5vw, 64px);
+    }
+    .doors__title {
+      margin-bottom: 32px;
+    }
+    .doors__grid {
+      flex-direction: column;
+      gap: 16px;
+    }
+    .door {
+      flex: none;
+      min-height: 340px;
+      padding: 24px;
+    }
+    .door__title {
+      margin-bottom: 8px;
+      font-size: 28px;
+    }
+    .door__tagline {
+      margin-bottom: 16px;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .door__photo {
+      transition: transform 150ms ease;
+    }
+    .door:hover .door__photo {
+      transform: scale(1.02);
+    }
+  }
+</style>
