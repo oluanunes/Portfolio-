@@ -1,0 +1,95 @@
+---
+import { Image } from 'astro:assets';
+import { t, type DictKey, type Lang } from '../i18n';
+import type { AreaSlug } from '../content/areas';
+import { altFor, listPhotos } from '../lib/photos';
+
+interface Props {
+  lang: Lang;
+  area: AreaSlug;
+}
+const { lang, area } = Astro.props;
+
+const photo = listPhotos(area)[0];
+---
+
+<section class="area-hero">
+  <Image
+    class="area-hero__photo"
+    src={photo}
+    alt={altFor(lang, area, 0)}
+    widths={[800, 1280, 1920]}
+    sizes="100vw"
+    format="webp"
+    loading="eager"
+    fetchpriority="high"
+  />
+  <div class="area-hero__scrim" aria-hidden="true"></div>
+  <div class="area-hero__content">
+    <div class="area-hero__text">
+      <h1 class="area-hero__title">{t(lang, `area.${area}.title` as DictKey)}</h1>
+      <p class="area-hero__tagline">{t(lang, `area.${area}.tagline` as DictKey)}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .area-hero {
+    position: relative;
+    min-height: 560px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    color: #ffffff;
+    background: #14110c;
+  }
+  .area-hero__photo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .area-hero__scrim {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.78) 100%);
+  }
+  .area-hero__content {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: flex-end;
+    padding: 160px clamp(20px, 5vw, 64px) 64px;
+  }
+  .area-hero__text {
+    max-width: 820px;
+  }
+  .area-hero__title {
+    margin: 0 0 16px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(40px, 5.5vw, 76px);
+    line-height: 1.04;
+    color: #ffffff;
+    overflow-wrap: break-word;
+  }
+  .area-hero__tagline {
+    margin: 0;
+    font-size: 18px;
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.88);
+  }
+
+  @media (max-width: 768px) {
+    .area-hero {
+      min-height: 440px;
+    }
+    .area-hero__content {
+      padding-bottom: 40px;
+    }
+    .area-hero__tagline {
+      font-size: 16px;
+    }
+  }
+</style>

@@ -1,0 +1,78 @@
+---
+import { t, type DictKey, type Lang } from '../i18n';
+import type { AreaSlug } from '../content/areas';
+import { href } from '../lib/url';
+
+interface Props {
+  lang: Lang;
+  area: AreaSlug;
+}
+const { lang, area } = Astro.props;
+
+// A query vem antes do fragmento: /{lang}/?tipo={area}#orcamento
+const quote = `${href(`/${lang}/`)}?tipo=${area}#orcamento`;
+---
+
+<section class="area-cta">
+  <div class="area-cta__inner">
+    <h2 class="area-cta__title">{t(lang, `area.${area}.cta.title` as DictKey)}</h2>
+    <p class="area-cta__text">{t(lang, `area.${area}.cta.text` as DictKey)}</p>
+    <a class="area-cta__button" href={quote}>{t(lang, `area.${area}.cta.button` as DictKey)}</a>
+  </div>
+</section>
+
+<style>
+  .area-cta {
+    padding: 112px clamp(20px, 5vw, 64px);
+    text-align: center;
+  }
+  .area-cta__inner {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+  .area-cta__title {
+    margin: 0 0 20px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(34px, 4vw, 52px);
+    line-height: 1.1;
+  }
+  .area-cta__text {
+    margin: 0 0 36px;
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+  .area-cta__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 56px;
+    max-width: 100%;
+    padding: 12px 36px;
+    font-size: 15px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 2px;
+    background: var(--accent);
+    color: var(--accent-text);
+  }
+
+  @media (max-width: 768px) {
+    .area-cta {
+      padding: 72px clamp(20px, 5vw, 64px);
+    }
+    .area-cta__button {
+      padding: 12px 24px;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .area-cta__button {
+      transition: opacity 150ms ease;
+    }
+    .area-cta__button:hover {
+      opacity: 0.88;
+    }
+  }
+</style>

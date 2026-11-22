@@ -13,10 +13,10 @@ const { lang, path } = Astro.props;
 
 const home = href(`/${lang}/`);
 const links = [
-  { label: t(lang, 'nav.landscape'), href: href(`/${lang}/landscape/`) },
-  { label: t(lang, 'nav.portrait'), href: href(`/${lang}/portrait/`) },
-  { label: t(lang, 'nav.commercial'), href: href(`/${lang}/commercial/`) },
-  { label: t(lang, 'nav.about'), href: `${home}#about` },
+  { label: t(lang, 'nav.landscape'), href: href(`/${lang}/landscape/`), current: path === 'landscape/' },
+  { label: t(lang, 'nav.portrait'), href: href(`/${lang}/portrait/`), current: path === 'portrait/' },
+  { label: t(lang, 'nav.commercial'), href: href(`/${lang}/commercial/`), current: path === 'commercial/' },
+  { label: t(lang, 'nav.about'), href: `${home}#about`, current: false },
 ];
 ---
 
@@ -38,7 +38,15 @@ const links = [
     </button>
 
     <ul class="links" id="primary-links">
-      {links.map((link) => <li><a class="link" href={link.href}>{link.label}</a></li>)}
+      {
+        links.map((link) => (
+          <li>
+            <a class="link" href={link.href} aria-current={link.current ? 'page' : undefined}>
+              {link.label}
+            </a>
+          </li>
+        ))
+      }
     </ul>
 
     <div class="controls">
@@ -92,8 +100,10 @@ const links = [
     color: #ffffff;
     text-decoration: none;
   }
-  .link:hover {
+  .link:hover,
+  .link[aria-current='page'] {
     text-decoration: underline;
+    text-underline-offset: 8px;
   }
   .controls {
     display: flex;

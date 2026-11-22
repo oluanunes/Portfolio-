@@ -1,0 +1,73 @@
+---
+import { t, type DictKey, type Lang } from '../i18n';
+import type { AreaSlug } from '../content/areas';
+
+interface Props {
+  lang: Lang;
+  area: AreaSlug;
+}
+const { lang, area } = Astro.props;
+
+const packages = [1, 2, 3].map((n) => t(lang, `area.${area}.package.${n}` as DictKey));
+---
+
+<section class="packages">
+  <div class="packages__inner">
+    <h2 class="packages__title">{t(lang, `area.${area}.packages.title` as DictKey)}</h2>
+    <ul class="packages__grid">
+      {packages.map((text) => <li class="package">{text}</li>)}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .packages {
+    padding: 96px clamp(20px, 5vw, 64px);
+    background: var(--surface);
+  }
+  .packages__inner {
+    max-width: 1312px;
+    margin: 0 auto;
+  }
+  .packages__title {
+    margin: 0 0 48px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(30px, 3.5vw, 44px);
+    line-height: 1.12;
+  }
+  .packages__grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+  .package {
+    flex: 1 1 280px;
+    min-width: 0;
+    padding: 32px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    font-size: 16px;
+    line-height: 1.6;
+    color: var(--muted);
+    overflow-wrap: break-word;
+  }
+
+  @media (max-width: 768px) {
+    .packages {
+      padding: 64px clamp(20px, 5vw, 64px);
+    }
+    .packages__title {
+      margin-bottom: 32px;
+    }
+    .packages__grid {
+      gap: 16px;
+    }
+    .package {
+      padding: 24px;
+    }
+  }
+</style>
