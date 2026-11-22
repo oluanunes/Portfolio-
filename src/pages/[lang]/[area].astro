@@ -6,6 +6,7 @@ import Gallery from '../../components/Gallery.astro';
 import Packages from '../../components/Packages.astro';
 import AreaCta from '../../components/AreaCta.astro';
 import { AREAS, type AreaSlug } from '../../content/areas';
+import { SHOW_PACKAGES } from '../../content/site';
 import { LANGS, t, type DictKey, type Lang } from '../../i18n';
 
 export const getStaticPaths = (() =>
@@ -31,7 +32,7 @@ const area = Astro.params.area as AreaSlug;
   </section>
 
   <Gallery lang={lang} area={area} />
-  <Packages lang={lang} area={area} />
+  {SHOW_PACKAGES && <Packages lang={lang} area={area} />}
   <AreaCta lang={lang} area={area} />
 </Base>
 

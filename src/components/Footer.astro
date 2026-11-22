@@ -5,12 +5,15 @@ interface Props {
   lang: Lang;
 }
 const { lang } = Astro.props;
+
+// E-mail público vindo do ambiente (PUBLIC_CONTACT_EMAIL). Vazio: o link não aparece.
+const contactEmail: string = (import.meta.env.PUBLIC_CONTACT_EMAIL ?? '').trim();
 ---
 
 <footer class="site-footer">
   <div class="site-footer__inner">
     <span>{t(lang, 'footer.copyright')}</span>
-    <span>{t(lang, 'footer.contact')}</span>
+    {contactEmail !== '' && <a class="site-footer__mail" href={`mailto:${contactEmail}`}>{contactEmail}</a>}
   </div>
 </footer>
 
@@ -28,5 +31,12 @@ const { lang } = Astro.props;
     gap: 16px;
     font-size: 14px;
     color: var(--muted);
+  }
+  .site-footer__mail {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-block: -12px;
+    color: inherit;
   }
 </style>

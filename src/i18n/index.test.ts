@@ -3,6 +3,7 @@ import { DEFAULT_LANG, LANGS, pickLang, t, type DictKey } from './index';
 import { pt } from './pt';
 import { fr } from './fr';
 import { en } from './en';
+import { BRAND } from '../content/site';
 
 const dicts = { pt, fr, en } as const;
 
@@ -75,7 +76,26 @@ describe('dicionários', () => {
     }
   });
 
-  it('o logotipo é o mesmo em todos os idiomas', () => {
-    for (const lang of LANGS) expect(t(lang, 'brand.logo')).toBe('[SEU NOME]');
+  it('o logotipo é a marca, igual em todos os idiomas', () => {
+    expect(BRAND).toBe('Luan Nunes Photography');
+    for (const lang of LANGS) expect(t(lang, 'brand.logo')).toBe(BRAND);
+  });
+
+  it('rodapé e títulos usam a marca', () => {
+    for (const lang of LANGS) {
+      expect(t(lang, 'footer.copyright')).toBe(`© ${BRAND}`);
+      for (const key of Object.keys(pt).filter((k) => /^meta\..*title$/.test(k))) {
+        expect(t(lang, key as DictKey), `${lang}:${key}`).toContain(BRAND);
+      }
+    }
+  });
+
+  it('nenhum texto visível tem [SEU NOME] nem instrução entre colchetes (só os modelos de pacotes, desligados)', () => {
+    for (const [lang, dict] of Object.entries(dicts)) {
+      for (const [key, value] of Object.entries(dict)) {
+        if (key.includes('.package.')) continue;
+        expect(value, `${lang}:${key}`).not.toMatch(/\[[^\]]*\]/);
+      }
+    }
   });
 });

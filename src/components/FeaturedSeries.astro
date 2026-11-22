@@ -2,6 +2,7 @@
 import { Image } from 'astro:assets';
 import { t, type DictKey, type Lang } from '../i18n';
 import { AREAS, type AreaSlug } from '../content/areas';
+import { href } from '../lib/url';
 import { altFor, listPhotos } from '../lib/photos';
 
 interface Props {
@@ -20,7 +21,9 @@ const items = Array.from({ length: 8 }, (_, i) => {
     area,
     photo: listPhotos(area)[index],
     alt: altFor(lang, area, index),
-    label: t(lang, `home.filter.${area}` as DictKey),
+    href: href(`/${lang}/${area}/`),
+    title: t(lang, `area.${area}.title` as DictKey),
+    tagline: t(lang, `area.${area}.tagline` as DictKey),
   };
 });
 ---
@@ -48,18 +51,20 @@ const items = Array.from({ length: 8 }, (_, i) => {
       {
         items.map((item) => (
           <li class="series__item" data-area={item.area}>
-            <Image
-              class="series__photo"
-              src={item.photo}
-              alt={item.alt}
-              widths={[400, 640, 960]}
-              sizes="(min-width: 900px) 25vw, (min-width: 600px) 50vw, 50vw"
-              format="webp"
-              loading="lazy"
-            />
-            <span class="series__scrim" aria-hidden="true" />
-            <span class="series__area">{item.label}</span>
-            <span class="series__name">{t(lang, 'home.series.placeholder')}</span>
+            <a class="series__link" href={item.href} aria-label={item.title}>
+              <Image
+                class="series__photo"
+                src={item.photo}
+                alt={item.alt}
+                widths={[400, 640, 960]}
+                sizes="(min-width: 900px) 25vw, (min-width: 600px) 50vw, 50vw"
+                format="webp"
+                loading="lazy"
+              />
+              <span class="series__scrim" aria-hidden="true" />
+              <span class="series__area">{item.title}</span>
+              <span class="series__name">{item.tagline}</span>
+            </a>
           </li>
         ))
       }
@@ -127,14 +132,23 @@ const items = Array.from({ length: 8 }, (_, i) => {
   .series__item {
     position: relative;
     aspect-ratio: 4 / 5;
+    overflow: hidden;
+    border-radius: 2px;
+    background: #14110c;
+  }
+  .series__link {
+    position: absolute;
+    inset: 0;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     padding: 20px;
-    overflow: hidden;
-    border-radius: 2px;
     color: #ffffff;
-    background: #14110c;
+    text-decoration: none;
+  }
+  .series__link:focus-visible {
+    outline-color: #ffffff;
+    outline-offset: -4px;
   }
   .series__item[hidden] {
     display: none;
@@ -191,7 +205,7 @@ const items = Array.from({ length: 8 }, (_, i) => {
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
     }
-    .series__item {
+    .series__link {
       padding: 12px;
     }
     .series__area {
