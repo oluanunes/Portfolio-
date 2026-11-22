@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import { t, type DictKey, type Lang } from '../i18n';
 import type { AreaSlug } from '../content/areas';
 import { altFor, listPhotos } from '../lib/photos';
+import { HERO_SCRIM, scrimGradient } from '../lib/scrims';
 
 interface Props {
   lang: Lang;
@@ -24,7 +25,7 @@ const photo = listPhotos(area)[0];
     loading="eager"
     fetchpriority="high"
   />
-  <div class="area-hero__scrim" aria-hidden="true"></div>
+  <div class="area-hero__scrim" aria-hidden="true" style={`background: ${scrimGradient(HERO_SCRIM)}`}></div>
   <div class="area-hero__content">
     <div class="area-hero__text">
       <h1 class="area-hero__title">{t(lang, `area.${area}.title` as DictKey)}</h1>
@@ -53,7 +54,6 @@ const photo = listPhotos(area)[0];
   .area-hero__scrim {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 30%, rgba(0, 0, 0, 0.78) 100%);
   }
   .area-hero__content {
     position: relative;

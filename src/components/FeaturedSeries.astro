@@ -4,6 +4,7 @@ import { t, type DictKey, type Lang } from '../i18n';
 import { AREAS, type AreaSlug } from '../content/areas';
 import { href } from '../lib/url';
 import { altFor, listPhotos } from '../lib/photos';
+import { CARD_SCRIM, scrimGradient } from '../lib/scrims';
 
 interface Props {
   lang: Lang;
@@ -22,8 +23,8 @@ const items = Array.from({ length: 8 }, (_, i) => {
     photo: listPhotos(area)[index],
     alt: altFor(lang, area, index),
     href: href(`/${lang}/${area}/`),
+    label: t(lang, `home.filter.${area}` as DictKey),
     title: t(lang, `area.${area}.title` as DictKey),
-    tagline: t(lang, `area.${area}.tagline` as DictKey),
   };
 });
 ---
@@ -61,9 +62,9 @@ const items = Array.from({ length: 8 }, (_, i) => {
                 format="webp"
                 loading="lazy"
               />
-              <span class="series__scrim" aria-hidden="true" />
-              <span class="series__area">{item.title}</span>
-              <span class="series__name">{item.tagline}</span>
+              <span class="series__scrim" aria-hidden="true" style={`background: ${scrimGradient(CARD_SCRIM)}`} />
+              <span class="series__area">{item.label}</span>
+              <span class="series__name">{t(lang, 'home.areas.seeSeries')}</span>
             </a>
           </li>
         ))
@@ -163,7 +164,6 @@ const items = Array.from({ length: 8 }, (_, i) => {
   .series__scrim {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.78) 100%);
   }
   .series__area,
   .series__name {
@@ -174,7 +174,7 @@ const items = Array.from({ length: 8 }, (_, i) => {
     font-size: 11px;
     letter-spacing: 0.18em;
     text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.8);
+    color: #ffffff;
   }
   .series__name {
     font-family: var(--font-display);

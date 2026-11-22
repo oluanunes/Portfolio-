@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import { t, type Lang } from '../i18n';
 import { href } from '../lib/url';
 import { altFor, listPhotos } from '../lib/photos';
+import { HERO_SCRIM, scrimGradient } from '../lib/scrims';
 
 interface Props {
   lang: Lang;
@@ -24,7 +25,7 @@ const quote = `${href(`/${lang}/`)}#orcamento`;
     loading="eager"
     fetchpriority="high"
   />
-  <div class="hero__scrim" aria-hidden="true"></div>
+  <div class="hero__scrim" aria-hidden="true" style={`background: ${scrimGradient(HERO_SCRIM)}`}></div>
   <div class="hero__content">
     <div class="hero__text">
       <h1 class="hero__title">{t(lang, 'home.hero.title')}</h1>
@@ -57,7 +58,6 @@ const quote = `${href(`/${lang}/`)}#orcamento`;
   .hero__scrim {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0) 28%, rgba(0, 0, 0, 0.78) 100%);
   }
   .hero__content {
     position: relative;
@@ -120,7 +120,7 @@ const quote = `${href(`/${lang}/`)}#orcamento`;
 
   @media (max-width: 768px) {
     .hero {
-      min-height: 640px;
+      min-height: 720px;
     }
     .hero__content {
       padding-bottom: 48px;

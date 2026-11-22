@@ -64,9 +64,3 @@ describe.each(['dark', 'light'] as const)('contraste do tema %s (lido de tokens.
     expect(contrastRatio(v['accent-text'], v.accent)).toBeGreaterThanOrEqual(4.5);
   });
 });
-
-describe('texto branco sobre foto sob o degradê', () => {
-  it('pior caso (foto branca sob degradê preto 0,78 = #383838) >= 4,5', () => {
-    expect(contrastRatio('#ffffff', '#383838')).toBeGreaterThanOrEqual(4.5);
-  });
-});

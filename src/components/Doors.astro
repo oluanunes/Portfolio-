@@ -4,6 +4,7 @@ import { t, type Lang } from '../i18n';
 import { AREAS } from '../content/areas';
 import { href } from '../lib/url';
 import { altFor, listPhotos } from '../lib/photos';
+import { CARD_SCRIM, scrimGradient } from '../lib/scrims';
 
 interface Props {
   lang: Lang;
@@ -37,7 +38,7 @@ const doors = AREAS.map((slug) => ({
               format="webp"
               loading="lazy"
             />
-            <span class="door__scrim" aria-hidden="true" />
+            <span class="door__scrim" aria-hidden="true" style={`background: ${scrimGradient(CARD_SCRIM)}`} />
             <span class="door__title">{door.title}</span>
             <span class="door__tagline">{door.tagline}</span>
             <span class="door__more">{t(lang, 'home.areas.seeSeries')}</span>
@@ -99,7 +100,6 @@ const doors = AREAS.map((slug) => ({
   .door__scrim {
     position: absolute;
     inset: 0;
-    background: linear-gradient(180deg, rgba(0, 0, 0, 0) 40%, rgba(0, 0, 0, 0.78) 100%);
   }
   .door__title,
   .door__tagline,
