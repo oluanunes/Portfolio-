@@ -1,0 +1,73 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      # Site e base saem do próprio repositório, então funciona com qualquer nome.
+      # Repositório "<dono>.github.io" é site de usuário e fica na raiz (base "/");
+      # qualquer outro nome vira "/<nome-do-repositório>/".
+      - name: Definir BASE
+        env:
+          OWNER: ${{ github.repository_owner }}
+          REPO: ${{ github.event.repository.name }}
+        run: |
+          owner_lc="$(printf '%s' "$OWNER" | tr '[:upper:]' '[:lower:]')"
+          repo_lc="$(printf '%s' "$REPO" | tr '[:upper:]' '[:lower:]')"
+          if [ "$repo_lc" = "${owner_lc}.github.io" ]; then
+            echo "BASE=/" >> "$GITHUB_ENV"
+          else
+            echo "BASE=/${REPO}/" >> "$GITHUB_ENV"
+          fi
+
+      - run: npm ci
+      - run: npm test
+
+      # PUBLIC_* ficam no HTML do site de propósito: use Variables do repositório
+      # (Settings > Secrets and variables > Actions > Variables), não Secrets.
+      # Com as duas vazias o build só avisa (o formulário não entrega nada).
+      - name: Build
+        run: npm run build
+        env:
+          SITE: https://${{ github.repository_owner }}.github.io
+          PUBLIC_WEB3FORMS_KEY: ${{ vars.PUBLIC_WEB3FORMS_KEY }}
+          PUBLIC_CONTACT_EMAIL: ${{ vars.PUBLIC_CONTACT_EMAIL }}
+
+      - run: npm run check
+
+      - uses: actions/configure-pages@v6
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5
