@@ -11,6 +11,15 @@ const { lang } = Astro.props;
 const accessKey: string = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '';
 const contactEmail: string = import.meta.env.PUBLIC_CONTACT_EMAIL ?? '';
 
+// Sem chave e sem e-mail, o formulário não entrega nada: avisa no build (sem falhar).
+const warned = globalThis as { __quoteFormWarned?: boolean };
+if (accessKey.trim() === '' && contactEmail.trim() === '' && !warned.__quoteFormWarned) {
+  warned.__quoteFormWarned = true;
+  console.warn(
+    '[QuoteForm] PUBLIC_WEB3FORMS_KEY e PUBLIC_CONTACT_EMAIL estão vazias: o formulário de orçamento não vai entregar nada até que pelo menos uma das duas seja definida (veja .env.example).',
+  );
+}
+
 // Textos que o script do cliente mostra, já traduzidos (o script não importa os dicionários).
 const messageKeys: DictKey[] = [
   'form.sending',
