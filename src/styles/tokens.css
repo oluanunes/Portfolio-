@@ -1,9 +1,12 @@
 :root {
+  color-scheme: dark;
   --bg: #0E1012;
   --surface: #171A1D;
   --text: #EDE9E2;
   --muted: #A9A399;
   --line: rgba(237, 233, 226, 0.28);
+  /* Borda de campos e botões de filtro: WCAG 1.4.11 pede 3:1 contra o fundo (--line é só decorativa). */
+  --field-border: rgba(237, 233, 226, 0.55);
   --accent: #D9A25B;
   --accent-text: #14110C;
   --font-display: 'Cormorant Garamond', Georgia, serif;
@@ -11,11 +14,13 @@
 }
 
 [data-theme="light"] {
+  color-scheme: light;
   --bg: #F5F2ED;
   --surface: #EAE5DC;
   --text: #17191B;
   --muted: #59544B;
   --line: rgba(23, 25, 27, 0.28);
+  --field-border: rgba(23, 25, 27, 0.55);
   --accent: #9A5B12;
   --accent-text: #FFFFFF;
 }

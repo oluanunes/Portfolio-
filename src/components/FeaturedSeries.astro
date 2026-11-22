@@ -113,7 +113,7 @@ const items = Array.from({ length: 8 }, (_, i) => {
     font-weight: 500;
     cursor: pointer;
     border-radius: 2px;
-    border: 1px solid var(--line);
+    border: 1px solid var(--field-border);
     background: transparent;
     color: var(--text);
   }
@@ -191,9 +191,13 @@ const items = Array.from({ length: 8 }, (_, i) => {
       gap: 16px;
       margin-bottom: 24px;
     }
+    /* overflow-x também corta no eixo y: o respiro de 4px deixa o anel de foco (2px + 2px de
+       afastamento) inteiro; a margem negativa devolve o alinhamento original. */
     .chips {
       flex-wrap: nowrap;
-      width: 100%;
+      width: calc(100% + 8px);
+      margin: -4px;
+      padding: 4px;
       gap: 8px;
       overflow-x: auto;
     }

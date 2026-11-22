@@ -14,7 +14,19 @@ function readTheme(selector: string): Record<string, string> {
   for (const m of block.matchAll(/--([\w-]+)\s*:\s*([^;]+);/g)) {
     vars[m[1]] = m[2].trim();
   }
+  const scheme = block.match(/(?:^|[\s;])color-scheme\s*:\s*([^;]+);/);
+  if (scheme) vars['color-scheme'] = scheme[1].trim();
   return vars;
+}
+
+/** `rgba(r, g, b, a)` sobre um fundo #rrggbb opaco -> #rrggbb resultante. */
+function flatten(rgba: string, bgHex: string): string {
+  const m = rgba.match(/^rgba\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*,\s*([\d.]+)\s*\)$/);
+  if (!m) throw new Error(`Esperado rgba(r, g, b, a), recebido ${rgba}`);
+  const alpha = Number(m[4]);
+  const bg = [1, 3, 5].map((i) => parseInt(bgHex.slice(i, i + 2), 16));
+  const out = [m[1], m[2], m[3]].map((c, i) => Math.round(Number(c) * alpha + bg[i] * (1 - alpha)));
+  return `#${out.map((n) => n.toString(16).padStart(2, '0')).join('')}`;
 }
 
 const themes = {
@@ -43,7 +55,7 @@ describe.each(['dark', 'light'] as const)('contraste do tema %s (lido de tokens.
   const v = themes[name];
 
   it('define todas as variáveis', () => {
-    for (const key of ['bg', 'surface', 'text', 'muted', 'line', 'accent', 'accent-text']) {
+    for (const key of ['bg', 'surface', 'text', 'muted', 'line', 'field-border', 'accent', 'accent-text']) {
       expect(v[key], `--${key}`).toBeTruthy();
     }
   });
@@ -62,5 +74,18 @@ describe.each(['dark', 'light'] as const)('contraste do tema %s (lido de tokens.
 
   it('texto sobre destaque >= 4,5', () => {
     expect(contrastRatio(v['accent-text'], v.accent)).toBeGreaterThanOrEqual(4.5);
+  });
+
+  it('borda de campos e filtros (--field-border) >= 3:1 contra o fundo e a superfície (WCAG 1.4.11)', () => {
+    expect(contrastRatio(flatten(v['field-border'], v.bg), v.bg)).toBeGreaterThanOrEqual(3);
+    expect(contrastRatio(flatten(v['field-border'], v.surface), v.surface)).toBeGreaterThanOrEqual(3);
+  });
+
+  it('a --line decorativa continua mais fraca que a borda de campos', () => {
+    expect(contrastRatio(flatten(v.line, v.bg), v.bg)).toBeLessThan(contrastRatio(flatten(v['field-border'], v.bg), v.bg));
+  });
+
+  it('declara color-scheme do tema', () => {
+    expect(v['color-scheme']).toBe(name);
   });
 });

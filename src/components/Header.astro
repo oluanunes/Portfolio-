@@ -143,15 +143,17 @@ const links = [
   }
 
   /* Telas estreitas: o menu recolhe atrás do botão, mas só quando o JavaScript
-     está ativo (a classe "js" é posta pelo script abaixo). Sem JS, os links
-     continuam visíveis. */
+     está ativo (a classe "js" é posta em <html> por public/theme-init.js, antes da
+     primeira pintura). Sem JS, os links continuam visíveis e o cabeçalho sai de cima
+     da foto: fica no fluxo, com fundo escuro, para não cobrir o título do hero. */
   @media (max-width: 768px) {
     .site-nav {
       padding: 16px 20px;
       gap: 12px;
     }
+    /* "Luan Nunes Photography" a 22px cabe ao lado do botão do menu em 320 px. */
     .logo {
-      font-size: 26px;
+      font-size: 22px;
     }
     .controls {
       order: 3;
@@ -164,16 +166,30 @@ const links = [
       align-items: flex-start;
       gap: 0;
     }
-    .js .menu-button {
+    :global(html:not(.js)) .site-header {
+      position: relative;
+      background: #14110c;
+    }
+    :global(html:not(.js)) .links {
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 0 20px;
+    }
+    :global(.js) .menu-button {
       display: flex;
     }
-    .js .links {
+    :global(.js) .links {
       display: none;
     }
-    .js .links.is-open {
+    :global(.js) .links.is-open {
       display: flex;
       padding: 8px 0;
-      background: rgba(0, 0, 0, 0.55);
+      background: rgba(14, 16, 18, 0.94);
+    }
+  }
+  @media (max-width: 360px) {
+    .logo {
+      font-size: 20px;
     }
   }
   @media (prefers-reduced-motion: no-preference) {
@@ -195,11 +211,21 @@ const links = [
   const links = header?.querySelector<HTMLElement>('#primary-links');
 
   if (header && button && links) {
-    header.classList.add('js');
-    button.addEventListener('click', () => {
-      const open = button.getAttribute('aria-expanded') !== 'true';
+    const setOpen = (open: boolean) => {
       button.setAttribute('aria-expanded', String(open));
       links.classList.toggle('is-open', open);
+    };
+    button.addEventListener('click', () => setOpen(button.getAttribute('aria-expanded') !== 'true'));
+    // Clicar em qualquer link do menu fecha (links de âncora não recarregam a página).
+    links.addEventListener('click', (event) => {
+      if ((event.target as Element).closest('a')) setOpen(false);
+    });
+    // Esc fecha e devolve o foco ao botão.
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && button.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        button.focus();
+      }
     });
   }
 </script>
