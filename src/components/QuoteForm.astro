@@ -11,12 +11,12 @@ const { lang } = Astro.props;
 const accessKey: string = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '';
 const contactEmail: string = import.meta.env.PUBLIC_CONTACT_EMAIL ?? '';
 
-// Sem chave e sem e-mail, o formulário não entrega nada: avisa no build (sem falhar).
+// Sem chave e sem e-mail, o formulário não entrega nada: avisa aqui e o `npm run check` falha.
 const warned = globalThis as { __quoteFormWarned?: boolean };
 if (accessKey.trim() === '' && contactEmail.trim() === '' && !warned.__quoteFormWarned) {
   warned.__quoteFormWarned = true;
   console.warn(
-    '[QuoteForm] PUBLIC_WEB3FORMS_KEY e PUBLIC_CONTACT_EMAIL estão vazias: o formulário de orçamento não vai entregar nada até que pelo menos uma das duas seja definida (veja .env.example).',
+    '[QuoteForm] PUBLIC_WEB3FORMS_KEY e PUBLIC_CONTACT_EMAIL estão vazias: o formulário de orçamento não vai entregar nada até que pelo menos uma das duas seja definida (veja .env.example); o npm run check vai falhar (ALLOW_UNCONFIGURED=1 libera em build local).',
   );
 }
 
@@ -27,9 +27,21 @@ const messageKeys: DictKey[] = [
   'form.failed',
   'form.unconfigured',
   'form.mailtoFallback',
+  'form.mailtoSubject',
   'form.error.name',
   'form.error.email',
+  // Rótulos do rascunho de e-mail (mailto), na língua da página.
+  'form.name',
+  'form.email',
+  'form.type',
+  'form.date',
+  'form.type.landscape',
+  'form.type.portrait',
+  'form.type.commercial',
+  'form.type.other',
 ];
+// Sem chave mas com e-mail: o pedido sai pelo app de e-mail da pessoa (avisamos antes do botão).
+const mailtoOnly = accessKey.trim() === '' && contactEmail.trim() !== '';
 const i18n = Object.fromEntries(messageKeys.map((key) => [key, t(lang, key)]));
 ---
 
@@ -99,10 +111,15 @@ const i18n = Object.fromEntries(messageKeys.map((key) => [key, t(lang, key)]));
         <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" />
       </div>
 
+      {mailtoOnly && <p class="quote__note">{t(lang, 'form.mailtoOnly')}</p>}
+
       <button class="quote__send" type="submit">{t(lang, 'form.send')}</button>
 
       <p class="quote__status" role="status" aria-live="polite" data-status></p>
-      <a class="quote__mailto" data-mailto hidden></a>
+      <p class="quote__fallback" data-fallback hidden>
+        <a class="quote__mailto" data-mailto hidden></a>
+        <span class="quote__address" data-mailto-address hidden></span>
+      </p>
     </form>
   </div>
 </section>
@@ -234,8 +251,31 @@ const i18n = Object.fromEntries(messageKeys.map((key) => [key, t(lang, key)]));
   .quote__status:empty {
     display: none;
   }
+  .quote__note {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .quote__fallback {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 4px;
+  }
+  .quote__fallback[hidden] {
+    display: none;
+  }
+  .quote__address {
+    font-size: 15px;
+    user-select: all;
+    overflow-wrap: anywhere;
+  }
+  .quote__address[hidden] {
+    display: none;
+  }
   .quote__mailto {
-    align-self: flex-start;
     display: inline-flex;
     align-items: center;
     min-height: 48px;

@@ -1,5 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
-import { buildMailto, parseTipo, submitQuote, validateQuote, type QuoteInput } from './quote';
+import {
+  buildMailto,
+  parseTipo,
+  submitQuote,
+  validateQuote,
+  type MailtoLabels,
+  type QuoteInput,
+} from './quote';
 
 const valid: QuoteInput = {
   name: 'Maria Silva',
@@ -7,6 +14,14 @@ const valid: QuoteInput = {
   type: 'portrait',
   date: 'junho de 2027',
   message: 'Sessão de casal ao pôr do sol.',
+};
+
+const labelsFr: MailtoLabels = {
+  subject: 'Demande de devis',
+  name: 'Nom',
+  email: 'E-mail',
+  type: 'Type de projet',
+  date: 'Date prévue',
 };
 
 describe('validateQuote', () => {
@@ -72,6 +87,47 @@ function fakeResponse(body: unknown, init: { ok?: boolean; status?: number } = {
 }
 
 describe('submitQuote', () => {
+  it('fetch que nunca responde vira failed depois do tempo limite (padrão 15 s) e aborta a requisição', async () => {
+    vi.useFakeTimers();
+    try {
+      let signal: AbortSignal | undefined;
+      const fetch = vi.fn((_url: unknown, init?: RequestInit) => {
+        signal = init?.signal ?? undefined;
+        return new Promise<Response>(() => {});
+      });
+      let outcome: string | undefined;
+      const pending = submitQuote(valid, {
+        fetch: fetch as unknown as typeof globalThis.fetch,
+        accessKey: 'k',
+      }).then((r) => (outcome = r));
+      await vi.advanceTimersByTimeAsync(14_999);
+      expect(outcome).toBeUndefined();
+      expect(signal?.aborted).toBe(false);
+      await vi.advanceTimersByTimeAsync(1);
+      await pending;
+      expect(outcome).toBe('failed');
+      expect(signal?.aborted).toBe(true);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('timeoutMs configurável e a resposta que chega a tempo limpa o cronômetro', async () => {
+    vi.useFakeTimers();
+    try {
+      const fetch = vi.fn().mockResolvedValue(fakeResponse({ success: true }));
+      const outcome = await submitQuote(valid, {
+        fetch: fetch as unknown as typeof globalThis.fetch,
+        accessKey: 'k',
+        timeoutMs: 50,
+      });
+      expect(outcome).toBe('sent');
+      expect(vi.getTimerCount()).toBe(0);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('sem chave devolve unconfigured e não chama o fetch', async () => {
     const fetch = vi.fn();
     expect(await submitQuote(valid, { fetch: fetch as unknown as typeof globalThis.fetch })).toBe(
@@ -195,27 +251,37 @@ describe('parseTipo', () => {
 
 describe('buildMailto', () => {
   it('sem e-mail de contato devolve texto vazio', () => {
-    expect(buildMailto('', valid)).toBe('');
-    expect(buildMailto('   ', valid)).toBe('');
+    expect(buildMailto('', valid, labelsFr)).toBe('');
+    expect(buildMailto('   ', valid, labelsFr)).toBe('');
   });
 
-  it('monta um mailto: com assunto e corpo codificados', () => {
-    const url = buildMailto('ola@example.com', valid);
+  it('monta um mailto: com assunto e corpo codificados, nos rótulos recebidos', () => {
+    const url = buildMailto('ola@example.com', { ...valid, type: 'Portrait, Couple et Famille' }, labelsFr);
     expect(url.startsWith('mailto:ola@example.com?subject=')).toBe(true);
     const query = new URLSearchParams(url.slice(url.indexOf('?') + 1));
-    expect(query.get('subject')).toBe('Pedido de orçamento — Maria Silva');
+    expect(query.get('subject')).toBe('Demande de devis — Maria Silva');
     const body = query.get('body') ?? '';
     const lines = body.split('\r\n');
-    expect(lines).toContain('Nome: Maria Silva');
+    expect(lines).toContain('Nom: Maria Silva');
     expect(lines).toContain('E-mail: maria@example.com');
-    expect(lines).toContain('Tipo: portrait');
-    expect(lines).toContain('Data prevista: junho de 2027');
+    expect(lines).toContain('Type de projet: Portrait, Couple et Famille');
+    expect(lines).toContain('Date prévue: junho de 2027');
     expect(body).toContain('Sessão de casal ao pôr do sol.');
+    expect(body).not.toContain('Nome:');
+    expect(body).not.toContain('Data prevista');
+  });
+
+  it('o assunto usa o prefixo recebido (en)', () => {
+    const labelsEn: MailtoLabels = { subject: 'Quote request', name: 'Name', email: 'Email', type: 'Type', date: 'Expected date' };
+    const url = buildMailto('ola@example.com', valid, labelsEn);
+    expect(new URLSearchParams(url.slice(url.indexOf('?') + 1)).get('subject')).toBe(
+      'Quote request — Maria Silva',
+    );
   });
 
   it('codifica acentos, quebras de linha, & e # da mensagem', () => {
     const message = 'Olá, João & Ana #1\nSegunda linha: 100%';
-    const url = buildMailto('ola@example.com', { ...valid, message });
+    const url = buildMailto('ola@example.com', { ...valid, message }, labelsFr);
     expect(url).not.toMatch(/[\r\n ]/);
     expect(url).not.toContain('#');
     expect(url.split('?')[1].match(/&/g)).toHaveLength(1); // só o separador subject&body

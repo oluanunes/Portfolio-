@@ -11,9 +11,9 @@ Site estático trilíngue (PT, FR, EN) de portfólio de fotografia, feito com As
 ## Formulário de orçamento
 
 - Copie `.env.example` para `.env` (não vai para o Git) e preencha antes do build.
-- `PUBLIC_WEB3FORMS_KEY`: chave gratuita criada em web3forms.com com o e-mail que recebe os pedidos. É pública por desenho. Sem ela, o formulário não envia nada pelo site e só oferece o link `mailto:` de reserva.
-- `PUBLIC_CONTACT_EMAIL`: e-mail do link `mailto:` de reserva (usado quando o envio falha ou a chave falta). Sem ele, o link não aparece e só a mensagem é mostrada.
-- Defina pelo menos uma das duas para que os visitantes consigam falar com você; o ideal é definir as duas. Com as duas vazias, o build avisa e o formulário não entrega nada.
+- `PUBLIC_CONTACT_EMAIL`: e-mail de contato. Aparece no rodapé e no link `mailto:` do formulário (com o endereço também em texto, para copiar). Sem chave do Web3Forms, é por ele que o pedido sai: o formulário avisa que o envio será feito pelo app de e-mail da pessoa.
+- `PUBLIC_WEB3FORMS_KEY`: chave gratuita criada em web3forms.com com o e-mail que recebe os pedidos. É pública por desenho. Com ela o pedido é enviado pelo site; o `mailto:` fica como reserva se o envio falhar.
+- **Pelo menos uma das duas é obrigatória.** Com as duas vazias, `npm run check` falha (o formulário não entregaria nada). Para um build local de teste sem nenhuma, rode o check assim: `ALLOW_UNCONFIGURED=1 npm run check`. O workflow de publicação não usa esse atalho.
 - As variáveis entram no build: depois de mudá-las, rode `npm run build` de novo.
 
 ## Publicação
@@ -22,7 +22,7 @@ O site é publicado no GitHub Pages por `.github/workflows/deploy.yml`: a cada p
 
 1. O repositório precisa ser público: o GitHub Pages grátis não funciona com repositório privado, e o código do site ficará visível.
 2. Em Settings → Pages, escolha Source: GitHub Actions.
-3. Em Settings → Secrets and variables → Actions → aba Variables, crie `PUBLIC_WEB3FORMS_KEY` e `PUBLIC_CONTACT_EMAIL` (veja a seção do formulário acima). Pelo menos uma é obrigatória; o ideal é definir as duas. Use Variables, não Secrets: os valores acabam no HTML do site de qualquer forma. Se mudar uma variável, rode o workflow de novo.
+3. Em Settings → Secrets and variables → Actions → aba Variables, crie `PUBLIC_WEB3FORMS_KEY` e `PUBLIC_CONTACT_EMAIL` (veja a seção do formulário acima). Pelo menos uma é obrigatória (sem nenhuma, o `npm run check` do workflow falha e nada é publicado); o ideal é definir as duas. Use Variables, não Secrets: os valores acabam no HTML do site de qualquer forma. Se mudar uma variável, rode o workflow de novo.
 4. Endereço do site: `https://<usuario>.github.io/<nome-do-repositorio>/`. Se o repositório se chamar `<usuario>.github.io`, o site fica na raiz: `https://<usuario>.github.io/`. O workflow calcula `SITE` e `BASE` a partir do nome do repositório, então não há nada para editar no código.
 
 Prévia local com o mesmo endereço do Pages (troque `meu-portfolio` pelo nome do repositório):

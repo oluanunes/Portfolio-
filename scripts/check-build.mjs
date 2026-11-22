@@ -222,6 +222,23 @@ else {
   }
 }
 
+// Caminho do orçamento nunca pode ser um beco sem saída: o formulário da Home precisa
+// de chave do Web3Forms e/ou e-mail de contato. ALLOW_UNCONFIGURED=1 libera (build local).
+{
+  const doc = html.get('/fr/');
+  if (doc !== undefined) {
+    const form = tagsOf(doc, 'form').find((a) => 'data-quote-form' in a);
+    if (!form) fail('/fr/', 'formulário de orçamento (#orcamento) não encontrado');
+    else if (!(form['data-access-key'] ?? '').trim() && !(form['data-contact-email'] ?? '').trim()) {
+      const detail =
+        'o formulário de orçamento não tem chave do Web3Forms nem e-mail de contato; defina PUBLIC_CONTACT_EMAIL ' +
+        '(e/ou PUBLIC_WEB3FORMS_KEY) como Variable do repositório ou no .env antes do build (veja .env.example)';
+      if (process.env.ALLOW_UNCONFIGURED === '1') warn('/fr/', 'ALLOW_UNCONFIGURED=1: regra do formulário ignorada', detail);
+      else fail('/fr/', detail);
+    }
+  }
+}
+
 // fotos acima de 8 MB: só avisa
 const photosDir = join(root, 'src', 'assets', 'photos');
 if (existsSync(photosDir)) {
