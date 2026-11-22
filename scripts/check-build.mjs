@@ -13,6 +13,11 @@ const HTML_LANG = { pt: 'pt-BR', fr: 'fr-CH', en: 'en' };
 const OG_LOCALE = { pt: 'pt_BR', fr: 'fr_CH', en: 'en_US' };
 const MAX_DESCRIPTION = 160;
 const MAX_PHOTO_BYTES = 8 * 1024 * 1024;
+// Texto-modelo que não pode chegar ao visitante: o nome de modelo antigo ou uma instrução
+// entre colchetes ("[Escreva 2 ou 3 frases...]"). 8+ caracteres dentro dos colchetes e começando
+// por letra evitam pegar "[1]", "[x]" ou "[...]".
+const PLACEHOLDER_NAME = '[SEU NOME]';
+const PLACEHOLDER_BRACKETS = /\[[A-ZÉÈa-zéèêàç][^\]]{8,}\]/;
 
 /** Páginas esperadas: rota (com barras) -> arquivo e idioma (null na raiz). */
 const pages = [{ route: '/', file: 'index.html', lang: null }];
@@ -237,6 +242,62 @@ else {
       else fail('/fr/', detail);
     }
   }
+}
+
+// Texto visível sem modelos: tira script, style, comentários e TODAS as tags (atributos ficam
+// de fora, p.ex. o JSON de data-i18n), e procura os modelos no que sobra.
+const visibleText = (doc) =>
+  decode(
+    doc
+      .replace(/<!--[\s\S]*?-->/g, ' ')
+      .replace(/<(script|style)\b[\s\S]*?<\/\1\s*>/gi, ' ')
+      .replace(/<[^>]*>/g, ' '),
+  );
+walk(dist, (file) => {
+  if (!file.endsWith('.html')) return;
+  const rel = file.slice(dist.length).replaceAll('\\', '/');
+  const text = visibleText(readFileSync(file, 'utf8'));
+  if (text.includes(PLACEHOLDER_NAME)) fail(rel, `texto visível contém ${PLACEHOLDER_NAME}`);
+  const found = text.match(PLACEHOLDER_BRACKETS);
+  if (found) fail(rel, 'texto visível contém instrução entre colchetes (modelo não preenchido)', found[0]);
+});
+
+// Todo href/src interno (começa com "/" e não com "//") precisa existir em dist depois de tirar o
+// prefixo da base (derivado do canonical da raiz). Âncoras "#" e URLs externas ficam de fora.
+{
+  const basePath = siteRoot ? new URL(siteRoot).pathname : '/';
+  const exists = (rel) => {
+    const target = join(dist, rel);
+    if (!target.startsWith(dist)) return false;
+    if (existsSync(target) && statSync(target).isFile()) return true;
+    return existsSync(join(target, 'index.html'));
+  };
+  walk(dist, (file) => {
+    if (!file.endsWith('.html')) return;
+    const rel = file.slice(dist.length).replaceAll('\\', '/');
+    const urls = new Set();
+    for (const tag of readFileSync(file, 'utf8').matchAll(/<[a-zA-Z][^>]*>/g)) {
+      const attrs = attrsOf(tag[0].slice(1));
+      for (const name of ['href', 'src']) if (attrs[name]) urls.add(attrs[name]);
+      if (attrs.srcset) for (const part of attrs.srcset.split(',')) urls.add(part.trim().split(/\s+/)[0]);
+    }
+    for (const url of urls) {
+      if (!url.startsWith('/') || url.startsWith('//')) continue;
+      const path = url.split(/[?#]/)[0];
+      if (!path.startsWith(basePath)) {
+        fail(rel, 'link interno sem o prefixo da base (use href())', `${url} (base ${basePath})`);
+        continue;
+      }
+      let local;
+      try {
+        local = decodeURIComponent(path.slice(basePath.length));
+      } catch {
+        fail(rel, 'link interno com codificação inválida', url);
+        continue;
+      }
+      if (!exists(local)) fail(rel, 'link interno não resolve para um arquivo ou página do build', url);
+    }
+  });
 }
 
 // fotos acima de 8 MB: só avisa
