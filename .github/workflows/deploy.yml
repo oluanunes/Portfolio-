@@ -52,8 +52,8 @@ jobs:
         run: npm run build
         env:
           SITE: https://${{ github.repository_owner }}.github.io
-          PUBLIC_WEB3FORMS_KEY: ${{ vars.02f7d7d5-4597-4afe-af15-661206394ef7 }}
-          PUBLIC_CONTACT_EMAIL: ${{ vars.oluanunes@icloud.com }}
+          PUBLIC_WEB3FORMS_KEY: ${{02f7d7d5-4597-4afe-af15-661206394ef7}}
+          PUBLIC_CONTACT_EMAIL: ${{oluanunes@icloud.com}}
 
       - run: npm run check
 
