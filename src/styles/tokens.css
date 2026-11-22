@@ -1,0 +1,30 @@
+:root {
+  --bg: #0E1012;
+  --surface: #171A1D;
+  --text: #EDE9E2;
+  --muted: #A9A399;
+  --line: rgba(237, 233, 226, 0.28);
+  --accent: #D9A25B;
+  --accent-text: #14110C;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+[data-theme="light"] {
+  --bg: #F5F2ED;
+  --surface: #EAE5DC;
+  --text: #17191B;
+  --muted: #59544B;
+  --line: rgba(23, 25, 27, 0.28);
+  --accent: #9A5B12;
+  --accent-text: #FFFFFF;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
