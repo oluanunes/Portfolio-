@@ -5,6 +5,7 @@ import Hero from '../../components/Hero.astro';
 import Doors from '../../components/Doors.astro';
 import FeaturedSeries from '../../components/FeaturedSeries.astro';
 import About from '../../components/About.astro';
+import QuoteForm from '../../components/QuoteForm.astro';
 import { LANGS, t, type Lang } from '../../i18n';
 
 export const getStaticPaths = (() =>
@@ -18,4 +19,5 @@ const lang = Astro.params.lang as Lang;
   <Doors lang={lang} />
   <FeaturedSeries lang={lang} />
   <About lang={lang} />
+  <QuoteForm lang={lang} />
 </Base>

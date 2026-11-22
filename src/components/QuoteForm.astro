@@ -1,0 +1,270 @@
+---
+import { t, type DictKey, type Lang } from '../i18n';
+import { AREAS } from '../content/areas';
+
+interface Props {
+  lang: Lang;
+}
+const { lang } = Astro.props;
+
+// Chaves públicas por desenho: ficam no HTML. Vazias quando a variável não existe.
+const accessKey: string = import.meta.env.PUBLIC_WEB3FORMS_KEY ?? '';
+const contactEmail: string = import.meta.env.PUBLIC_CONTACT_EMAIL ?? '';
+
+// Textos que o script do cliente mostra, já traduzidos (o script não importa os dicionários).
+const messageKeys: DictKey[] = [
+  'form.sending',
+  'form.sent',
+  'form.failed',
+  'form.unconfigured',
+  'form.mailtoFallback',
+  'form.error.name',
+  'form.error.email',
+];
+const i18n = Object.fromEntries(messageKeys.map((key) => [key, t(lang, key)]));
+---
+
+<section class="quote" id="orcamento">
+  <div class="quote__inner">
+    <div class="quote__intro">
+      <h2 class="quote__title">{t(lang, 'form.title')}</h2>
+      <p class="quote__sub">{t(lang, 'form.sub')}</p>
+    </div>
+
+    <form
+      class="quote__form"
+      novalidate
+      data-quote-form
+      data-access-key={accessKey}
+      data-contact-email={contactEmail}
+      data-i18n={JSON.stringify(i18n)}
+    >
+      <div class="field">
+        <label for="f-name">{t(lang, 'form.name')}</label>
+        <input
+          id="f-name"
+          name="name"
+          type="text"
+          autocomplete="name"
+          aria-describedby="f-name-error"
+        />
+        <p class="field__error" id="f-name-error"></p>
+      </div>
+
+      <div class="field">
+        <label for="f-email">{t(lang, 'form.email')}</label>
+        <input
+          id="f-email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          aria-describedby="f-email-error"
+        />
+        <p class="field__error" id="f-email-error"></p>
+      </div>
+
+      <div class="row">
+        <div class="field field--type">
+          <label for="f-type">{t(lang, 'form.type')}</label>
+          <select id="f-type" name="type">
+            {
+              [...AREAS, 'other' as const].map((value) => (
+                <option value={value}>{t(lang, `form.type.${value}`)}</option>
+              ))
+            }
+          </select>
+        </div>
+        <div class="field field--date">
+          <label for="f-date">{t(lang, 'form.date')}</label>
+          <input id="f-date" name="date" type="text" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-message">{t(lang, 'form.message')}</label>
+        <textarea id="f-message" name="message" rows="5"></textarea>
+      </div>
+
+      {/* Isca contra robôs: fora da tela, fora da ordem de Tab e escondida de leitores de tela. */}
+      <div class="hp" aria-hidden="true">
+        <input type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <button class="quote__send" type="submit">{t(lang, 'form.send')}</button>
+
+      <p class="quote__status" role="status" aria-live="polite" data-status></p>
+      <a class="quote__mailto" data-mailto hidden></a>
+    </form>
+  </div>
+</section>
+
+<style>
+  .quote {
+    padding: 112px clamp(20px, 5vw, 64px);
+  }
+  .quote__inner {
+    max-width: 1312px;
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 64px;
+  }
+  .quote__intro {
+    flex: 1 1 320px;
+    max-width: 460px;
+  }
+  .quote__title {
+    margin: 0 0 20px;
+    font-family: var(--font-display);
+    font-weight: 500;
+    font-size: clamp(34px, 4vw, 52px);
+    line-height: 1.1;
+  }
+  .quote__sub {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.65;
+    color: var(--muted);
+  }
+  .quote__form {
+    flex: 1 1 420px;
+    max-width: 680px;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 22px;
+  }
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+  }
+  .row > .field {
+    flex: 1 1 200px;
+  }
+  .field--type {
+    flex-basis: 260px;
+  }
+  label {
+    font-size: 13px;
+    font-weight: 500;
+  }
+  input[type='text'],
+  input[type='email'],
+  select,
+  textarea {
+    width: 100%;
+    font-family: inherit;
+    font-size: 16px;
+    border-radius: 2px;
+    border: 1px solid var(--line);
+    background: var(--bg);
+    color: var(--text);
+  }
+  input[type='text'],
+  input[type='email'],
+  select {
+    min-height: 52px;
+    padding: 0 16px;
+  }
+  select {
+    padding: 0 12px;
+  }
+  textarea {
+    padding: 14px 16px;
+    resize: vertical;
+  }
+  input[aria-invalid='true'] {
+    border-color: var(--accent);
+  }
+  .field__error {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--accent);
+  }
+  .field__error:empty {
+    display: none;
+  }
+  .hp {
+    position: absolute;
+    left: -10000px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .quote__send {
+    align-self: flex-start;
+    min-height: 52px;
+    padding: 0 34px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 2px;
+    border: 0;
+    background: var(--accent);
+    color: var(--accent-text);
+    cursor: pointer;
+  }
+  .quote__send:disabled {
+    opacity: 0.6;
+    cursor: default;
+  }
+  .quote__status {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.55;
+    color: var(--text);
+  }
+  .quote__status:empty {
+    display: none;
+  }
+  .quote__mailto {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0 26px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 2px;
+    border: 1px solid var(--text);
+    color: var(--text);
+  }
+  .quote__mailto[hidden] {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .quote {
+      padding: 64px clamp(20px, 5vw, 64px);
+    }
+    .quote__inner {
+      gap: 32px;
+    }
+    .quote__send {
+      align-self: stretch;
+    }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .quote__send,
+    .quote__mailto {
+      transition: opacity 150ms ease;
+    }
+    .quote__send:hover:not(:disabled),
+    .quote__mailto:hover {
+      opacity: 0.88;
+    }
+  }
+</style>
+
+<script>
+  import '../scripts/quote-form';
+</script>
