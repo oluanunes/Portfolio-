@@ -244,6 +244,13 @@ else {
   }
 }
 
+// Privacidade: as fontes são do próprio site. Nenhuma URL de Google Fonts em nenhum arquivo de texto do build.
+walk(dist, (file) => {
+  if (!/\.(html|css|js|mjs|svg|xml|txt|json|webmanifest)$/i.test(file)) return;
+  const hit = readFileSync(file, 'utf8').match(/https?:\/\/[^\s"'()<>]*(?:googleapis|gstatic)[^\s"'()<>]*|\/\/[^\s"'()<>]*(?:googleapis|gstatic)[^\s"'()<>]*/i);
+  if (hit) fail(file.slice(dist.length).replaceAll('\\', '/'), 'URL de Google Fonts no build (as fontes devem ser locais)', hit[0]);
+});
+
 // Texto visível sem modelos: tira script, style, comentários e TODAS as tags (atributos ficam
 // de fora, p.ex. o JSON de data-i18n), e procura os modelos no que sobra.
 const visibleText = (doc) =>

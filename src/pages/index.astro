@@ -1,6 +1,7 @@
 ---
 import '../styles/tokens.css';
 import '../styles/global.css';
+import '../styles/fonts.css';
 import { t, type Lang } from '../i18n';
 import { href } from '../lib/url';
 
@@ -33,12 +34,6 @@ const choices: { lang: Lang; label: string; htmlLang: string }[] = [
     <meta property="og:locale" content="fr_CH" />
     <meta property="og:locale:alternate" content="en_US" />
     <meta property="og:locale:alternate" content="pt_BR" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap"
-    />
     <script is:inline src={href('/theme-init.js')}></script>
   </head>
   <body>

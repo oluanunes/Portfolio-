@@ -1,6 +1,7 @@
 ---
 import '../styles/tokens.css';
 import '../styles/global.css';
+import '../styles/fonts.css';
 import { LANGS, t, type Lang } from '../i18n';
 import { href } from '../lib/url';
 import Header from '../components/Header.astro';
@@ -46,12 +47,6 @@ const ogAlternates = LANGS.filter((code) => code !== lang).map((code) => ogLocal
     {ogAlternates.map((locale) => <meta property="og:locale:alternate" content={locale} />)}
     {alternates.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
     <link rel="alternate" hreflang="x-default" href={xDefault} />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600&family=Inter:wght@400;500;600&display=swap"
-    />
     <script is:inline src={href('/theme-init.js')}></script>
   </head>
   <body>
